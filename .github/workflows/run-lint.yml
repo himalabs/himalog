@@ -14,17 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          version: "0.6.2"
-          enable-cache: true
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
 
       - name: Install dependencies
-        run: uv sync --python 3.10 --frozen
+        run: poetry install --no-interaction --no-root
 
       - name: Install lint and typecheck dependencies
-        run: uv pip install ruff black mypy flake8
+        run: poetry run pip install ruff black mypy flake8
 
       - name: Run Black formatter
         run: make format
