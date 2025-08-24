@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.2 - (2025-08-24)
+
+### Added
+- SMTP handler support: send logs via email using SMTPHandler.
+- HTTP handler support: send logs to remote HTTP endpoints using HTTPHandler.
+- Contextual logging support: inject context (e.g., request IDs, user info) into all log records via config or code.
+- Robust error handling: handler setup is now wrapped in a safe function that logs errors if a handler fails to initialize, preventing logger crashes.
+- Beautiful, structured, and colorful logs: ColorFormatter now outputs aligned fields and context fields for enhanced readability (emoji removed for professional output).
+
 ## v0.1.1 - (2025-07-28)
 
 ### Added
