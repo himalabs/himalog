@@ -1,6 +1,7 @@
 import logging
 import logging.handlers
-from typing import Optional, Union, Callable
+from typing import Callable, Optional, Union
+
 from ..core import _DEFAULT_FORMAT
 
 
@@ -12,8 +13,8 @@ def add_timed_rotating_file_handler(
     backup_count: int = 7,
     level: Optional[Union[int, str]] = None,
     fmt: Optional[str] = None,
-    filter_func: Optional[Callable] = None,
-):
+    filter_func: Optional[Callable[[logging.LogRecord], bool]] = None,
+) -> None:
     t_handler = logging.handlers.TimedRotatingFileHandler(
         filename, when=when, interval=interval, backupCount=backup_count
     )

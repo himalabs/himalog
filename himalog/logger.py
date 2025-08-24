@@ -4,31 +4,32 @@ Public API for the himalog logging system.
 """
 
 import logging
-from typing import Optional, Union, Callable, Any, Dict
-from .core import HimaLog, _DEFAULT_FORMAT
+from typing import Any, Callable, Optional, Union
+
+from .config import load_config
+from .core import _DEFAULT_FORMAT, HimaLog
+from .formatters import ColorFormatter, JsonFormatter
 from .handlers.console import add_console_handler
 from .handlers.file import add_file_handler
-from .handlers.rotating_file import add_rotating_file_handler
-from .handlers.timed_rotating_file import add_timed_rotating_file_handler
-from .formatters import JsonFormatter, ColorFormatter
-from .handlers.smtp import add_smtp_handler
 from .handlers.http import add_http_handler
-from .config import load_config
+from .handlers.rotating_file import add_rotating_file_handler
+from .handlers.smtp import add_smtp_handler
+from .handlers.timed_rotating_file import add_timed_rotating_file_handler
 
 
 def get_logger(
     name: Optional[str] = None,
     level: Union[int, str, None] = None,
     fmt: Optional[str] = None,
-    config_env: Optional[Dict[str, str]] = None,
+    config_env: Optional[dict[str, str]] = None,
     console: bool = True,
     file: Optional[str] = None,
     config_path: Optional[str] = None,
-    timed_rotating_file: Optional[Dict[str, Any]] = None,
+    timed_rotating_file: Optional[dict[str, Any]] = None,
     formatter: Optional[str] = None,
-    smtp_handler: Optional[Dict[str, Any]] = None,
-    http_handler: Optional[Dict[str, Any]] = None,
-    filter_func: Optional[Callable] = None,
+    smtp_handler: Optional[dict[str, Any]] = None,
+    http_handler: Optional[dict[str, Any]] = None,
+    filter_func: Optional[Callable[..., bool]] = None,
 ) -> logging.Logger:
     """Get a configured logger. See documentation for all options."""
     config = None
@@ -48,7 +49,7 @@ def get_logger(
         )
         formatter = config.get("formatter", formatter)
     # Formatter selection
-    formatter_obj = None
+    formatter_obj: Optional[Union[ColorFormatter, JsonFormatter]] = None
     if formatter == "json":
         formatter_obj = JsonFormatter()
     elif formatter == "color":
@@ -56,21 +57,25 @@ def get_logger(
 
     # Contextual logging support
     class ContextFilter(logging.Filter):
-        def __init__(self, context: dict = None):
+        def __init__(self, context: Optional[dict[str, Any]] = None) -> None:
             super().__init__()
-            self.context = context or {}
+            self.context: dict[str, Any] = context or {}
 
-        def filter(self, record):
+        def filter(self, record: logging.LogRecord) -> bool:
             for k, v in self.context.items():
                 setattr(record, k, v)
             return True
 
-    context = config.get("context") if config else None
-    context_filter = None
+    context: Optional[dict[str, Any]] = (
+        config.get("context") if config else None
+    )
+    context_filter: Optional[ContextFilter] = None
     if context:
         context_filter = ContextFilter(context)
 
-    def safe_add_handler(add_func, *args, **kwargs):
+    def safe_add_handler(
+        add_func: Callable[..., None], *args: Any, **kwargs: Any
+    ) -> None:
         try:
             add_func(*args, **kwargs)
         except Exception as e:
@@ -123,4 +128,5 @@ def get_logger(
     if formatter_obj:
         for handler in logger.handlers:
             handler.setFormatter(formatter_obj)
+    assert isinstance(logger, logging.Logger)
     return logger

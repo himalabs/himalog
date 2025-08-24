@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import HTTPHandler
-from typing import Optional, Union, Callable
+from typing import Callable, Optional, Union
+
 from ..core import _DEFAULT_FORMAT
 
 
@@ -11,8 +12,8 @@ def add_http_handler(
     method: str = "POST",
     level: Optional[Union[int, str]] = None,
     fmt: Optional[str] = None,
-    filter_func: Optional[Callable] = None,
-):
+    filter_func: Optional[Callable[[logging.LogRecord], bool]] = None,
+) -> None:
     handler = HTTPHandler(host, url, method=method)
     handler.setFormatter(logging.Formatter(fmt or _DEFAULT_FORMAT))
     if level:

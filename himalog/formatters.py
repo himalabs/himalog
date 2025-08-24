@@ -1,6 +1,5 @@
-import logging
 import json
-from typing import Any
+import logging
 
 
 class JsonFormatter(logging.Formatter):

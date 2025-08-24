@@ -3,40 +3,40 @@ Configuration loader for himalog.
 Supports YAML, JSON, and TOML config files.
 """
 
-import os
 import json
-from typing import Any, Dict, Optional
+import os
+from typing import Any
 
 try:
-    import yaml
+    import yaml as _yaml
 except ImportError:
-    yaml = None
+    _yaml = None  # type: ignore
 try:
-    import toml
+    import toml as _toml
 except ImportError:
-    toml = None
+    _toml = None  # type: ignore
 
 
-def load_config(config_path: str) -> Dict[str, Any]:
+def load_config(config_path: str) -> Any:
     ext = os.path.splitext(config_path)[1].lower()
     with open(config_path, "r", encoding="utf-8") as f:
         if ext in [".yaml", ".yml"]:
-            if not yaml:
+            if not _yaml or not getattr(_yaml, "safe_load", None):
                 raise ImportError("pyyaml is required for YAML config support")
-            return yaml.safe_load(f)
+            return _yaml.safe_load(f)
         elif ext == ".json":
             return json.load(f)
         elif ext == ".toml":
-            if not toml:
+            if not _toml or not getattr(_toml, "load", None):
                 raise ImportError("toml is required for TOML config support")
-            return toml.load(f)
+            return _toml.load(f)
         else:
             raise ValueError(f"Unsupported config file extension: {ext}")
 
 
 def get_config_from_env(
     env_var: str = "HIMALOG_CONFIG",
-) -> Optional[Dict[str, Any]]:
+) -> Any:
     path = os.getenv(env_var)
     if path and os.path.isfile(path):
         return load_config(path)

@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import SMTPHandler
-from typing import Optional, Union, Callable
+from typing import Any, Callable, Optional, Union
+
 from ..core import _DEFAULT_FORMAT
 
 
@@ -8,14 +9,14 @@ def add_smtp_handler(
     logger: logging.Logger,
     mailhost: str,
     fromaddr: str,
-    toaddrs: list,
+    toaddrs: list[str],
     subject: str,
-    credentials: Optional[tuple] = None,
-    secure: Optional[tuple] = None,
+    credentials: Optional[tuple[str, str]] = None,
+    secure: Optional[tuple[Any, ...]] = None,
     level: Optional[Union[int, str]] = None,
     fmt: Optional[str] = None,
-    filter_func: Optional[Callable] = None,
-):
+    filter_func: Optional[Callable[[logging.LogRecord], bool]] = None,
+) -> None:
     handler = SMTPHandler(
         mailhost,
         fromaddr,
