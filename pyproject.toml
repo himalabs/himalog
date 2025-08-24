@@ -1,7 +1,7 @@
 [project]
 name = "himalog"
-version = "0.1.1"
-description = ""
+version = "0.1.2"
+description = "Himalog – Flexible, Modular Logging for Python Applications"
 authors = [
     {name = "himalabs",email = "maharanasarkars3@gmail.com"}
 ]
