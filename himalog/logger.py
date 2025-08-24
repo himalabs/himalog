@@ -25,7 +25,9 @@ def get_logger(
     console: bool = True,
     file: Optional[str] = None,
     config_path: Optional[str] = None,
+    rotating_file: Optional[dict[str, Any]] = None,
     timed_rotating_file: Optional[dict[str, Any]] = None,
+    context: Optional[dict[str, Any]] = None,
     formatter: Optional[str] = None,
     smtp_handler: Optional[dict[str, Any]] = None,
     http_handler: Optional[dict[str, Any]] = None,
@@ -33,7 +35,7 @@ def get_logger(
 ) -> logging.Logger:
     """Get a configured logger. See documentation for all options."""
     config = None
-    rotating_file = None
+    # rotating_file is now an argument
     if config_path:
         config = load_config(config_path)
     if config:
@@ -66,9 +68,8 @@ def get_logger(
                 setattr(record, k, v)
             return True
 
-    context: Optional[dict[str, Any]] = (
-        config.get("context") if config else None
-    )
+    if config and "context" in config:
+        context = config["context"]
     context_filter: Optional[ContextFilter] = None
     if context:
         context_filter = ContextFilter(context)
