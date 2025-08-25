@@ -9,6 +9,8 @@ from typing import Any, Callable, Optional, Union
 from .config import load_config
 from .core import _DEFAULT_FORMAT, HimaLog
 from .formatters import ColorFormatter, JsonFormatter
+from .handlers.async_http import add_async_http_handler
+from .handlers.async_smtp import add_async_smtp_handler
 from .handlers.console import add_console_handler
 from .handlers.file import add_file_handler
 from .handlers.http import add_http_handler
@@ -165,9 +167,23 @@ def get_logger(
             filter_func=filter_func,
         )
     if smtp_handler:
-        safe_add_handler(add_smtp_handler, logger, **smtp_handler)
+        if smtp_handler.get("async"):
+            safe_add_handler(
+                add_async_smtp_handler,
+                logger,
+                **{k: v for k, v in smtp_handler.items() if k != "async"},
+            )
+        else:
+            safe_add_handler(add_smtp_handler, logger, **smtp_handler)
     if http_handler:
-        safe_add_handler(add_http_handler, logger, **http_handler)
+        if http_handler.get("async"):
+            safe_add_handler(
+                add_async_http_handler,
+                logger,
+                **{k: v for k, v in http_handler.items() if k != "async"},
+            )
+        else:
+            safe_add_handler(add_http_handler, logger, **http_handler)
     # Apply formatter to all handlers if specified
     if formatter_obj:
         for handler in logger.handlers:
