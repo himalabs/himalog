@@ -77,10 +77,7 @@ pip install -r requirements.txt
 To install the latest code directly from the main repository (not recommended for production):
 
 ```bash
-pip install git+https://github.com/himalabs/himalog.git@feat/logger
-```
-
-Replace the branch or tag as needed.
+pip install git+https://github.com/himalabs/himalog.git@main
 
 ## Optional / extra dependencies
 
