@@ -105,6 +105,7 @@ def get_logger(
                 setattr(record, k, v)
             return True
 
+    context_filter: Optional[ContextFilter] = None
     if context:
         context_filter = ContextFilter(context)
 

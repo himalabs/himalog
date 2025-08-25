@@ -1,3 +1,6 @@
+# Declare phony targets to avoid conflicts with files/directories of the same name
+.PHONY: all format lint typecheck tests test
+
 # Format the code using Black and Ruff's formatter
 format:
 	# Format all Python files with Black (opinionated code formatter)
@@ -16,5 +19,10 @@ typecheck:
 	poetry run mypy . --verbose
 
 
-all: format lint typecheck
-	# Run all tasks: format, lint, and type-check
+# Run tests (allow both 'tests' and 'test' as targets)
+tests test:
+	# Execute the test suite with pytest
+	poetry run pytest --verbose
+
+all: format lint typecheck tests
+	# Run all tasks: format, lint, type-check, and tests
