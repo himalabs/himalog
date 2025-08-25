@@ -35,16 +35,21 @@ logger = get_logger(
 	file="app.log",
 	rotating_file={"filename": "app_rot.log", "max_bytes": 1000000, "backup_count": 5},
 	timed_rotating_file={"filename": "app_time.log", "when": "midnight", "backup_count": 7},
-	smtp_handler={"mailhost": "smtp.example.com", "fromaddr": "from@example.com", "toaddrs": ["to@example.com"], "subject": "Log Alert"},
-	http_handler={"host": "localhost:8000", "url": "/log", "method": "POST"},
+	smtp_handler={"mailhost": "smtp.example.com", "fromaddr": "from@example.com", "toaddrs": ["to@example.com"], "subject": "Log Alert", "async": True},
+	http_handler={"host": "localhost:8000", "url": "/log", "method": "POST", "async": True},
 	formatter="color",  # or "json" for structured logs
-	context={"request_id": "abc123", "user": "alice"}
+	context={"request_id": "abc123", "user": "alice"},
+	use_queue=True,  # Enable async logging for all handlers
+	queue_size=1000, # Optional: set queue size
+	use_memory_handler=True,  # Enable batching/buffering for all handlers
+	memory_capacity=100,      # Buffer size before flush
+	memory_flush_level="ERROR", # Flush buffer on ERROR or higher
 )
-logger.debug("This will go to all configured handlers.")
+logger.debug("This will go to all configured handlers asynchronously and/or in batches.")
 ```
 
-`get_logger` supports the following arguments:
 
+`get_logger` supports the following arguments (in addition to handler configs):
 - `name`: Logger name (str)
 - `level`: Log level (str or int, e.g. "INFO", "DEBUG")
 - `fmt`: Log format string (optional)
@@ -59,6 +64,13 @@ logger.debug("This will go to all configured handlers.")
 - `context`: Dict of extra fields to inject into all log records (e.g. request_id, user)
 - `config_path`: Path to YAML/JSON/TOML config file (optional)
 - `filter_func`: Custom filter function (optional)
+- `use_queue` (bool): Use QueueHandler/QueueListener for async logging (all handlers)
+- `queue_size` (int): Max size of the log queue
+- `use_memory_handler` (bool): Wrap handlers in MemoryHandler for batching
+- `memory_capacity` (int): Buffer size for MemoryHandler
+- `memory_flush_level` (str|int): Level at which MemoryHandler flushes
+
+All previous arguments are still supported (see above).
 
 ---
 
