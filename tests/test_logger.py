@@ -14,7 +14,7 @@ def test_basic_console_logger(caplog: LogCaptureFixture) -> None:
     Args:
         caplog (LogCaptureFixture): Pytest log capture fixture.
     """
-    logger = get_logger("test_basic_console_logger")
+    logger = get_logger(name="test_basic_console_logger")
     with caplog.at_level(logging.INFO):
         logger.info("Hello test!")
     assert any("Hello test!" in m for m in caplog.messages)
@@ -84,7 +84,7 @@ def test_json_formatter(caplog: LogCaptureFixture) -> None:
     Args:
         caplog (LogCaptureFixture): Pytest log capture fixture.
     """
-    logger = get_logger("test_json_formatter", formatter="json")
+    logger = get_logger(name="test_json_formatter", formatter="json")
     with caplog.at_level(logging.INFO):
         logger.info("json test")
     assert any("json test" in m for m in caplog.messages)
@@ -97,7 +97,7 @@ def test_color_formatter(caplog: LogCaptureFixture) -> None:
     Args:
         caplog (LogCaptureFixture): Pytest log capture fixture.
     """
-    logger = get_logger("test_color_formatter", formatter="color")
+    logger = get_logger(name="test_color_formatter", formatter="color")
     with caplog.at_level(logging.INFO):
         logger.info("color test")
     assert any("color test" in m for m in caplog.messages)
@@ -110,7 +110,9 @@ def test_contextual_logging(caplog: LogCaptureFixture) -> None:
     Args:
         caplog (LogCaptureFixture): Pytest log capture fixture.
     """
-    logger = get_logger("test_contextual_logging", context={"user": "alice"})
+    logger = get_logger(
+        name="test_contextual_logging", context={"user": "alice"}
+    )
     with caplog.at_level(logging.INFO):
         logger.info("context test")
     assert any("context test" in m for m in caplog.messages)

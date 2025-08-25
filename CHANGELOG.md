@@ -5,8 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.1.2 - (2025-08-24)
+## v0.1.3 - (2025-08-25)
+### Added
+- Asynchronous logging support for all handlers using QueueHandler/QueueListener (`use_queue` argument).
+- Batch/buffered logging support using MemoryHandler (`use_memory_handler`, `memory_capacity`, `memory_flush_level`).
+- SMTP/HTTP handlers can now be made async individually with `"async": True` in their config dicts.
+- All handler and logger APIs are fully type-annotated and mypy-compliant.
+- Tests for async and batch logging.
 
+## v0.1.2 - (2025-08-24)
 ### Added
 - SMTP handler support: send logs via email using SMTPHandler.
 - HTTP handler support: send logs to remote HTTP endpoints using HTTPHandler.
@@ -15,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Beautiful, structured, and colorful logs: ColorFormatter now outputs aligned fields and context fields for enhanced readability (emoji removed for professional output).
 
 ## v0.1.1 - (2025-07-28)
-
 ### Added
 - `CHANGELOG.md` for release notes and keeping changes logged.
 - `CODE_OF_CONDUCT.md` to enforce strong community rules for safer environment.
@@ -23,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## v0.1.0 - (2025-07-27)
-
 ### Added
 
 - `poetry.lock` file to lock dependency versions.
