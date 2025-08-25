@@ -33,9 +33,29 @@ def get_logger(
     http_handler: Optional[dict[str, Any]] = None,
     filter_func: Optional[Callable[..., bool]] = None,
 ) -> logging.Logger:
-    """Get a configured logger. See documentation for all options."""
+    """
+    Get a configured logger with advanced features.
+
+    Args:
+        name (Optional[str]): Logger name. Defaults to None (root logger).
+        level (Union[int, str, None]): Logging level. Defaults to None.
+        fmt (Optional[str]): Log message format string. Defaults to None.
+        config_env (Optional[dict[str, str]]): Environment variable overrides. Defaults to None.
+        console (bool): Add console handler. Defaults to True.
+        file (Optional[str]): File path for file handler. Defaults to None.
+        config_path (Optional[str]): Path to config file (YAML/JSON/TOML). Defaults to None.
+        rotating_file (Optional[dict[str, Any]]): Rotating file handler config. Defaults to None.
+        timed_rotating_file (Optional[dict[str, Any]]): Timed rotating file handler config. Defaults to None.
+        context (Optional[dict[str, Any]]): Contextual fields to add to log records. Defaults to None.
+        formatter (Optional[str]): Formatter type ('color', 'json', or None). Defaults to None.
+        smtp_handler (Optional[dict[str, Any]]): SMTP handler config. Defaults to None.
+        http_handler (Optional[dict[str, Any]]): HTTP handler config. Defaults to None.
+        filter_func (Optional[Callable[..., bool]]): Custom filter function. Defaults to None.
+
+    Returns:
+        logging.Logger: Configured logger instance.
+    """
     config = None
-    # rotating_file is now an argument
     if config_path:
         config = load_config(config_path)
     if config:
@@ -50,6 +70,7 @@ def get_logger(
             "timed_rotating_file", timed_rotating_file
         )
         formatter = config.get("formatter", formatter)
+
     # Formatter selection
     formatter_obj: Optional[Union[ColorFormatter, JsonFormatter]] = None
     if formatter == "json":
@@ -59,24 +80,45 @@ def get_logger(
 
     # Contextual logging support
     class ContextFilter(logging.Filter):
+        """
+        Logging filter to inject contextual fields into log records.
+
+        Args:
+            context (Optional[dict[str, Any]]): Contextual fields to add.
+        """
+
         def __init__(self, context: Optional[dict[str, Any]] = None) -> None:
             super().__init__()
             self.context: dict[str, Any] = context or {}
 
         def filter(self, record: logging.LogRecord) -> bool:
+            """
+            Add context fields to the log record.
+
+            Args:
+                record (logging.LogRecord): The log record.
+
+            Returns:
+                bool: Always True.
+            """
             for k, v in self.context.items():
                 setattr(record, k, v)
             return True
 
-    if config and "context" in config:
-        context = config["context"]
-    context_filter: Optional[ContextFilter] = None
     if context:
         context_filter = ContextFilter(context)
 
     def safe_add_handler(
         add_func: Callable[..., None], *args: Any, **kwargs: Any
     ) -> None:
+        """
+        Safely add a logging handler, catching and logging errors.
+
+        Args:
+            add_func (Callable[..., None]): Handler addition function.
+            *args: Positional arguments for handler.
+            **kwargs: Keyword arguments for handler.
+        """
         try:
             add_func(*args, **kwargs)
         except Exception as e:

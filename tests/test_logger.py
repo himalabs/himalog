@@ -8,6 +8,12 @@ from himalog.logger import get_logger
 
 
 def test_basic_console_logger(caplog: LogCaptureFixture) -> None:
+    """
+    Test that the console logger outputs messages at INFO level.
+
+    Args:
+        caplog (LogCaptureFixture): Pytest log capture fixture.
+    """
     logger = get_logger("test_basic_console_logger")
     with caplog.at_level(logging.INFO):
         logger.info("Hello test!")
@@ -15,6 +21,12 @@ def test_basic_console_logger(caplog: LogCaptureFixture) -> None:
 
 
 def test_file_handler(tmp_path: Path) -> None:
+    """
+    Test that the file handler writes logs to a file.
+
+    Args:
+        tmp_path (Path): Temporary directory fixture.
+    """
     log_file = tmp_path / "test.log"
     logger = get_logger(name="test_file_handler", file=str(log_file))
     logger.warning("File handler works!")
@@ -24,6 +36,12 @@ def test_file_handler(tmp_path: Path) -> None:
 
 
 def test_rotating_file_handler(tmp_path: Path) -> None:
+    """
+    Test that the rotating file handler rotates logs as expected.
+
+    Args:
+        tmp_path (Path): Temporary directory fixture.
+    """
     log_file = tmp_path / "rot.log"
     logger = get_logger(
         name="test_rotating_file_handler",
@@ -39,6 +57,12 @@ def test_rotating_file_handler(tmp_path: Path) -> None:
 
 
 def test_timed_rotating_file_handler(tmp_path: Path) -> None:
+    """
+    Test that the timed rotating file handler rotates logs on schedule.
+
+    Args:
+        tmp_path (Path): Temporary directory fixture.
+    """
     log_file = tmp_path / "timed.log"
     logger = get_logger(
         name="test_timed_rotating_file_handler",
@@ -54,6 +78,12 @@ def test_timed_rotating_file_handler(tmp_path: Path) -> None:
 
 
 def test_json_formatter(caplog: LogCaptureFixture) -> None:
+    """
+    Test that the JSON formatter outputs logs in JSON format.
+
+    Args:
+        caplog (LogCaptureFixture): Pytest log capture fixture.
+    """
     logger = get_logger("test_json_formatter", formatter="json")
     with caplog.at_level(logging.INFO):
         logger.info("json test")
@@ -61,6 +91,12 @@ def test_json_formatter(caplog: LogCaptureFixture) -> None:
 
 
 def test_color_formatter(caplog: LogCaptureFixture) -> None:
+    """
+    Test that the color formatter outputs colorized logs.
+
+    Args:
+        caplog (LogCaptureFixture): Pytest log capture fixture.
+    """
     logger = get_logger("test_color_formatter", formatter="color")
     with caplog.at_level(logging.INFO):
         logger.info("color test")
@@ -68,6 +104,12 @@ def test_color_formatter(caplog: LogCaptureFixture) -> None:
 
 
 def test_contextual_logging(caplog: LogCaptureFixture) -> None:
+    """
+    Test that contextual fields are added to log records.
+
+    Args:
+        caplog (LogCaptureFixture): Pytest log capture fixture.
+    """
     logger = get_logger("test_contextual_logging", context={"user": "alice"})
     with caplog.at_level(logging.INFO):
         logger.info("context test")

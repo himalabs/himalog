@@ -1,9 +1,28 @@
+"""
+Formatters for himalog loggers.
+
+Includes JSON and colorized formatters for advanced log output.
+"""
+
 import json
 import logging
 
 
 class JsonFormatter(logging.Formatter):
+    """
+    Formatter that outputs logs in JSON format.
+    """
+
     def format(self, record: logging.LogRecord) -> str:
+        """
+        Format a log record as a JSON string.
+
+        Args:
+            record (logging.LogRecord): The log record.
+
+        Returns:
+            str: JSON-formatted log string.
+        """
         log_record = {
             "time": self.formatTime(record, self.datefmt),
             "level": record.levelname,
@@ -16,6 +35,10 @@ class JsonFormatter(logging.Formatter):
 
 
 class ColorFormatter(logging.Formatter):
+    """
+    Formatter that outputs colorized log messages for the console.
+    """
+
     COLORS = {
         "DEBUG": "\033[94m",
         "INFO": "\033[92m",
@@ -26,6 +49,15 @@ class ColorFormatter(logging.Formatter):
     RESET = "\033[0m"
 
     def format(self, record: logging.LogRecord) -> str:
+        """
+        Format a log record as a colorized string.
+
+        Args:
+            record (logging.LogRecord): The log record.
+
+        Returns:
+            str: Colorized log string.
+        """
         color = self.COLORS.get(record.levelname, self.RESET)
         time = self.formatTime(record, self.datefmt)
         name = record.name.ljust(15)
