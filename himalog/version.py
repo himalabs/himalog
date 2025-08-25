@@ -1,3 +1,9 @@
+"""
+Version information for himalog.
+
+Attempts to retrieve the installed package version, or sets to 'unknown' if not installed.
+"""
+
 import importlib_metadata
 
 try:
